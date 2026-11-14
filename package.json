@@ -1,0 +1,21 @@
+{
+  "name": "qa-assessment-sondos",
+  "version": "1.0.0",
+  "private": true,
+  "description": "UI + API test automation for the EventHub booking flow (Playwright + TypeScript)",
+  "scripts": {
+    "test": "playwright test",
+    "test:e2e": "playwright test --project=e2e",
+    "test:api": "playwright test --project=api",
+    "test:visual": "playwright test --project=visual",
+    "test:visual:update": "playwright test --project=visual --update-snapshots",
+    "test:headed": "playwright test --project=e2e --headed",
+    "report": "playwright show-report",
+    "typecheck": "tsc --noEmit"
+  },
+  "devDependencies": {
+    "@playwright/test": "^1.65.0",
+    "@types/node": "^26.6.6",
+    "typescript": "^7.0.2"
+  }
+}

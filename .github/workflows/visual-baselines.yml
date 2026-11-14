@@ -1,0 +1,45 @@
+name: visual baselines (linux)
+
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  generate:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci
+      - run: npx playwright install --with-deps chromium
+      - name: Generate Linux baselines
+        run: npx playwright test --project=visual --update-snapshots
+        env:
+          VISUAL: '1'
+          EVENTHUB_EMAIL: ${{ secrets.EVENTHUB_EMAIL }}
+          EVENTHUB_PASSWORD: ${{ secrets.EVENTHUB_PASSWORD }}
+          EVENTHUB_EMAIL_2: ${{ secrets.EVENTHUB_EMAIL_2 }}
+          EVENTHUB_PASSWORD_2: ${{ secrets.EVENTHUB_PASSWORD_2 }}
+      - name: Keep a copy of the screenshots with the run
+        uses: actions/upload-artifact@v4
+        with:
+          name: linux-baselines
+          path: tests/visual/__screenshots__/linux/
+      - name: Commit the baselines
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add tests/visual/__screenshots__/linux
+          if git diff --cached --quiet; then
+            echo "Baselines unchanged, nothing to commit."
+          else
+            git commit -m "test(visual): update Linux baselines"
+            git push
+          fi

@@ -1,0 +1,4 @@
+
+[data-testid="user-email-display"] {
+  visibility: hidden !important;
+}
